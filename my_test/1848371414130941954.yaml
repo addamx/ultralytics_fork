@@ -1,0 +1,7 @@
+names:
+- "\u5B89\u5168\u5E3D"
+- "\u53CD\u5149\u8863"
+nc: 2
+test: D:/projects/AI/dataset/helmet/test/images
+train: D:/projects/AI/dataset/helmet/train/images
+val: D:/projects/AI/dataset/helmet/val/images
