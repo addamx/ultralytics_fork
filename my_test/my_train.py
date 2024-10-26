@@ -34,23 +34,57 @@ if __name__ == "__main__":
         self._do_train(）
         
     3. self._do_train(）
-    self._setup_train(world_size) 
+    self._setup_train(world_size) # 3.1
     
-    3.1 self._setup_train
-    set_model_attributes
-        model.nc    # 类数目
-        model.names # 类别名
-        model.args # 超参数
-    Freeze layers
-    amp模式（模型权重和激活使用 16 位精度存储，但某些计算保持 32 位精度，以保持数值稳定性）
-        self.amp, self.scaler
-    self.stride = 32
-    check_train_batch_size
-    self.train_loader = self.get_dataloader
+        3.1 self._setup_train
+        set_model_attributes
+            model.nc    # 类数目
+            model.names # 类别名
+            model.args # 超参数
+        Freeze layers
+        amp模式（模型权重和激活使用 16 位精度存储，但某些计算保持 32 位精度，以保持数值稳定性）
+            self.amp, self.scaler
+        self.stride = 32
+        check_train_batch_size
+        self.train_loader = self.get_dataloader # 3.1.1
+        self.optimizer = self.build_optimizer
+        self._setup_scheduler()
     
-    3.1.1 get_dataloader
-    build_dataset 
-        build_yolo_dataset
+            3.1.1 get_dataloader
+            build_dataset 
+                build_yolo_dataset
+                    YOLODataset(BaseDataset)
+                        __init__
+                            cache_images
+                            transforms = build_transforms()
+            build_dataloader
+            
+    self.optimizer.zero_grad()
+    while True:
+        self.model.train()
+        
+        pbar = enumerate(self.train_loader)
+        for i, batch in pbar:
+            # Forward
+            with autocast(self.amp):
+                batch = self.preprocess_batch(batch)
+                # !!!
+                self.loss, self.loss_items = self.model(batch)
+                
+            # Backward
+            self.scaler.scale(self.loss).backward()
+        
+            # Optimize 
+            self.optimizer_step()
+            
+        # Validation
+        self.metrics, self.fitness = self.validate()
+        self.save_model()
+    
+    self.plot_metrics()
+        
+    
+    
     
         
     '''
