@@ -15,6 +15,12 @@ if __name__ == "__main__":
         model = ckpt.model # DetectionModel
     model.args = {**DEFAULT_CFG_DICT, **(ckpt.get("train_args", {}))}  超参数
     model.yaml 对应 yolo11n.yaml，记录了backbone、head、nc(80)、scale(n)、ch(3)
+    model = YOLO("yolo11n.pt")
+    
+    
+    1.1 DetectionModel __init__
+    parse_model(deepcopy(self.yaml)) # 根据模型 yaml文件（eg. cfg/models/11/yolo11.yaml）构建模型
+        
     '''
     model = YOLO("yolo11n.pt")
 
